@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+      <meta name="viewport" content="width=device-width">
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+      <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>☃</text></svg>">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Karla:wght@800&display=swap" rel="stylesheet"> 
+
+
+  <style>
+
+    html {
+      background-image: linear-gradient(to bottom left, navy, blue);
+      background-size: cover;
+}
+
+    h1 {
+      font-family: Bebas Neue;
+      font-size: 6vw;
+    }
+
+    h2 {
+      font-family: Karla;
+      font-size: 3vw;
+
+    }
+    h3 {
+      font-family: Karla;
+      font-size: 1vw;
+
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      color: #fff;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    a{
+    color: #FFA500
+    }
+
+    #container {
+      position: relative;
+      background-color: rgba(0, 0, 0, 0.0);
+      padding: 30px;
+      border-radius: 10px;
+    }
+
+  </style>
+</head>
+<body>
+<div id="container">
+  <h1 id="result"></h1>
+  <h2 id="daysUntil"></h2>
+</div>
+<script>
+  
+  function getEasterDate(year) {
+      const a = year % 19;
+      const b = Math.floor(year / 100);
+      const c = year % 100;
+      const d = Math.floor(b / 4);
+      const e = b % 4;
+      const f = Math.floor((b + 8) / 25);
+      const g = Math.floor((b - f + 1) / 3);
+      const h = (19 * a + b - d - g + 15) % 30;
+      const i = Math.floor(c / 4);
+      const k = c % 4;
+      const l = (32 + 2 * e + 2 * i - h - k) % 7;
+      const m = Math.floor((a + 11 * h + 22 * l) / 451);
+      const n = h + l - 7 * m + 114;
+      const month = Math.floor(n / 31);
+      const day = (n % 31) + 1;
+      return new Date(year, month - 1, day);
+  }
+
+  function getLabourDay(year) {
+    // Find the first day of October
+    const firstDayOfOctober = new Date(year, 9, 1); // Note: JavaScript months are 0-indexed, so October is represented by 9
+
+    // Find the day of the week for the first day of October (0 for Sunday, 1 for Monday, etc.)
+    const dayOfWeek = firstDayOfOctober.getDay();
+
+    // Calculate the day of the month for the fourth Monday (dayOfMonth)
+    // If the first day of October is a Monday (1), then Labour Day is on the 22nd (4th Monday)
+    // Otherwise, it is on the (8 - dayOfWeek) + 22nd
+    const dayOfMonth = (dayOfWeek === 1) ? 22 : (8 - dayOfWeek) + 22;
+
+    // Create the Labour Day date object
+    const labourDay = new Date(year, 9, dayOfMonth); // Again, remember October is represented by 9
+
+    return labourDay;
+}
+
+  function isDanWearingBeanie() {
+      const currentDate = new Date();
+      const year = currentDate.getFullYear();
+      const easterDate = getEasterDate(year);
+      const labourDay = getLabourDay(year);
+      let resultText = "";
+      let daysUntilText = "";
+
+      // Check if the current date falls between Easter Sunday and Labour Day
+      if (currentDate >= easterDate && currentDate < labourDay) {
+          resultText = "Dan is wearing his beanie today.";
+          const daysUntilLabourDay = Math.ceil((labourDay - currentDate) / (1000 * 60 * 60 * 24));
+          daysUntilText = `Dan will be wearing the beanie until Labour Day, which is ${daysUntilLabourDay} days away.`;
+      } else {
+          resultText = "Dan isn't wearing his beanie today.";
+          const nextEasterYear = (currentDate < easterDate) ? year : year + 1;
+          const nextEasterDate = getEasterDate(nextEasterYear);
+          const daysUntilEaster = Math.ceil((nextEasterDate - currentDate) / (1000 * 60 * 60 * 24));
+          daysUntilText = `Dan gets to start wearing the beanie on Easter Sunday, which is in ${daysUntilEaster} days.`;
+      }
+
+      document.getElementById("result").innerText = resultText;
+      document.getElementById("daysUntil").innerText = daysUntilText;
+  }
+
+
+  // Call the function to check if Dan is wearing a beanie when the page loads
+  window.onload = function() {
+      isDanWearingBeanie();
+      displayRandomWallpaper();
+  };
+</script>
+</body>
+</html>
